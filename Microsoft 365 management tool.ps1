@@ -1,6 +1,24 @@
 # Combined PowerShell Script for Various Administrative Tasks
 # This script consolidates functionalities from multiple scripts and provides an interactive menu.
 
+# Function: Export Azure AD Group Memberships
+function Export-AzureADGroupMemberships {
+    Write-Host "Exporting Azure AD Group Memberships..." -ForegroundColor Cyan
+    # Ensure the AzureAD module is installed
+    try {
+        Connect-AzureAD
+        $groups = Get-AzureADGroup
+        foreach ($group in $groups) {
+            $members = Get-AzureADGroupMember -ObjectId $group.ObjectId
+            #does not work
+            $members | Export-Csv -Path "C:\temp\${group.DisplayName}_Members.csv" -NoTypeInformation
+            Write-Host "Exported members of group $($group.DisplayName)." -ForegroundColor Green
+        }
+    } catch {
+        Write-Host "An error occurred: $_" -ForegroundColor Red
+    }
+}
+
 # Menu Display
 function Show-Menu {
     Write-Host "---------------------------------------------" -ForegroundColor Yellow
